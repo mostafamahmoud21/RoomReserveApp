@@ -1,41 +1,47 @@
 import { PrismaClient } from '@prisma/client';
-import { createNewUserDto, signIn } from '../dtos/dto.auth';
-import { ComparePassword } from '../utils/bcrypt';
+import { ComparePassword, HashPassword } from '../utils/bcrypt';
+import { IUserRegister ,IUserLogin} from '../interfaces/auth';
 
 const prisma = new PrismaClient()
 
-export const SignUpServices = async (user: createNewUserDto) => {
+class AuthServices {
+    async signup({ name, email, password }: IUserRegister) {
+        const existUser = await prisma.user.findUnique({
+            where: {
+                email,
+            }
+        })
+        if (existUser) {
+            throw new Error('Email already exists')
+        }
 
-    const existEmail = await prisma.user.findUnique({
+
+        const hashPassword = await HashPassword(password)
+        return await prisma.user.create({
+            data: {
+                name, email, password: hashPassword
+            }
+        })
+    }
+async signin({email,password}:IUserLogin){
+    // * check if email not found
+    const existUser = await prisma.user.findUnique({
         where: {
-            email: user.email
+            email,
         }
     })
-
-    if (existEmail) {
-        throw new Error('Email already exists');
+    if (!existUser) {
+        throw new Error('User Not Found')
     }
-
-    return await prisma.user.create({
-        data: user,
-    })
-}
-
-export const SignInServices = async (user: signIn) => {
-
-    const existEmail = await prisma.user.findUnique({
-        where: {
-            email: user.email
-        }
-    })
-
-    if (!existEmail) {
-        throw new Error('User Not Found');
+    // * compare password
+    const matchPassword=await ComparePassword(password,existUser.password)
+    if(!matchPassword){
+        throw new Error('Invalid Email or Password')
     }
+    // * generate token 
     
-    const isPasswordCorrect = await ComparePassword(user.password, existEmail.password);
-    if (!isPasswordCorrect) {
-        throw new Error('Incorrect password');
-    }
-    return existEmail
 }
+
+}
+
+export default new AuthServices
