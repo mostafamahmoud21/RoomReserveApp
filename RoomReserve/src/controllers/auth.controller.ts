@@ -16,7 +16,7 @@ class AuthController {
         try {
             const { email, password } = req.body
             const user = await AuthServices.signin({ email, password })
-            res.status(200).json({ msg: "login successfully" })
+            res.status(200).json({ msg: "login successfully" ,user})
         } catch (error) {
             const errMsg = error instanceof Error ? error.message : "unknown erron"
             res.status(500).json({ error: errMsg });
