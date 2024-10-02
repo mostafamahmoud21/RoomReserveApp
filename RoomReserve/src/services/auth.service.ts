@@ -45,7 +45,7 @@ class AuthServices {
         }
 
         // Generate token
-        const token = await generateToken({userId:existUser.id,email:existUser.email,role:existUser.role});
+        const token = await generateToken({id:existUser.id,email:existUser.email,role:existUser.role});
 
         // Respond with token and basic user info
         const { password: _, ...resUserProperties } = existUser
