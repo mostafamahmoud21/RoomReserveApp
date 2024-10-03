@@ -7,13 +7,47 @@ export const changePasswordValidator = [
         .matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
         .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.')
         .notEmpty().withMessage('Password is required.'),
-        check('newPassword')
+    check('newPassword')
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long.')
         .matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
         .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.')
         .notEmpty().withMessage('Password is required.'),
 
     // Error handling middleware
+    (req: Request, res: Response, next: NextFunction) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
+        }
+
+        next();
+    }
+];
+
+export const forgetPasswordValidator = [
+    check('email')
+        .isEmail().withMessage('Please enter a valid email address.')
+        .notEmpty().withMessage('Email is required.'),
+
+    (req: Request, res: Response, next: NextFunction) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
+        }
+
+        next();
+    }
+];
+
+export const resetPasswordValidator = [
+    check('newPassword')
+        .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long.')
+        .matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
+        .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.')
+        .notEmpty().withMessage('Password is required.'),
+
     (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
 

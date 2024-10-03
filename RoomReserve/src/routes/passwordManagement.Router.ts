@@ -1,8 +1,10 @@
 import express from 'express';
-import { changePassword } from '../controllers/passwordManagement.controller';
+import { changePassword, forgetPassword, resetPassword } from '../controllers/passwordManagement.controller';
 import { authMiddleware } from '../middlewares/auth.middleware';
-import { changePasswordValidator } from '../validations/passwordManagement.validation';
+import { changePasswordValidator, forgetPasswordValidator, resetPasswordValidator } from '../validations/passwordManagement.validation';
 
 export const passwordManagementRouter = express()
 
-passwordManagementRouter.post('/change-password',authMiddleware,changePasswordValidator,changePassword)
+passwordManagementRouter.post('/change-password', authMiddleware, changePasswordValidator, changePassword)
+passwordManagementRouter.post('/forget-password', forgetPasswordValidator, forgetPassword)
+passwordManagementRouter.post('/reset-password', resetPasswordValidator, resetPassword)
