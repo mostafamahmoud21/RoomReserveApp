@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 
 // Define a custom interface for the decoded token
-interface DecodedToken {
-  userId: number;
+export interface DecodedToken {
+  id: number;
   email: string;
   iat: number;
   exp: number;
